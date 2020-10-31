@@ -87,25 +87,32 @@ User-Agent: '.$useragent.'
 Accept-Encoding: gzip, deflate, sdch');
 curl_setopt($search, CURLOPT_HTTPHEADER, $h);
 $search = curl_exec($search);
-// echo $search;
 $search = json_decode($search);
 
 if(isset($search->user)){
     $user = $search->user;
-$ret = ['f'=>$user->follower_count,'ff'=>$user->following_count,'m'=>$user->media_count,'user'=>$user->username];
+$ret = ['f'=>$user->follower_count,'user'=>$user->username];
 if(isset($user->public_email)){
   if($user->public_email != ''){
       $mail = $user->public_email;
       $ret['mail'] = $mail;
+      $ret['ff'] = $user->following_count;
+      $ret['f'] = $user->follower_count;
+      $ret['m'] = $user->media_count;
   } else {
       $ret = false;
   }
 } else {
   $ret = false;
 }
-} else {
-    echo json_encode($search);
-    $ret = false;
+} elseif(isset($search->message)) {
+    
+    // echo json_encode($search);
+    if($search->message == 'يرجى الانتظار لبضع دقائق قبل إعادة المحاولة.' or $search->message == 'login_required'){
+        $ret = 'banned';
+    } else {
+        $ret = false;
+    }
 }
 return $ret;
 }
@@ -189,7 +196,7 @@ X-Requested-With: XMLHttpRequest'));
 }
 function checkGmail($mail){
     $mail = trim($mail);
-    if(strpos($mail, ' ') or strpos($mail, '+')){
+    if(strpos($mail, ' ') or strpos($mail, '+') or strlen($mail) <= 5 or strpos($mail, '_')){
         return false;
     }
   $mail = preg_replace('/@(.*)/', '',$mail);
@@ -211,16 +218,20 @@ function checkGmail($mail){
   $res = curl_exec($ch);
   curl_close($ch);
   $s =  json_decode($res);
-  if(isset($s->input01)){
-  if(isset($s->input01->Valid)){
-      if($s->input01->Valid == 'true'){
-          return true;
+  if($s != null and $res != null){
+      if(isset($s->input01)){
+      if(isset($s->input01->Valid)){
+          if($s->input01->Valid == 'true'){
+              return true;
+          } else {
+              return false;
+          }
       } else {
           return false;
       }
-  } else {
-      return false;
-  }
+      } else {
+          return false;
+      }
   } else {
       return false;
   }
@@ -262,6 +273,7 @@ function checkHotmail($url,$mail){
       return false;
   }
 }
+                                                                                                                                                                                                                                                                                                                                                                                   
 class EzTGException extends Exception
 {
 }
@@ -313,7 +325,7 @@ class EzTG
     }
     private function is_telegram()
     {
-        if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) { //@api_web
+        if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) { //preferisco non usare x-forwarded-for xk si può spoof
             $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
         } else {
             $ip = $_SERVER['REMOTE_ADDR'];
@@ -594,13 +606,13 @@ class ig {
 		]);
 	}
 	public function getFollowing($id,$mid,$uuu,$maxId = null){
-	    $config = json_decode(file_get_contents('config.json'),1);
-	    $from = 'Following.';
+	        $config = json_decode(file_get_contents('config.json'),1);
+	    $from = 'Following';
 		$file = $this->file;
 		$rank_token = $this->UUID();
 		$datas['rank_token'] = $rank_token;
 		if($maxId != null){
-			$datas['max_id'] = $maxId;
+		 $datas['max_id'] = $maxId;
 		}
 		$res = $this->request("friendships/$id/following/",1,0,$datas,0);
 		if(isset($res->users)){
@@ -610,16 +622,16 @@ class ig {
 					$users[] = $user->username;
 					file_put_contents($file, $user->username."\n",FILE_APPEND);
 				}
-			}
-    	
+				}
+    	$from = file_exists('from') ? file_get_contents('from') : 'From Following';
     	bot('editmessageText',[
     		'chat_id'=>$config['id'],
     		'message_id'=>$mid,
-    		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
-		]])
+    		'text'=>"Grab From Following Running\nUsers - ".count(explode("\n", file_get_contents($file)))."_",
+    		'parse_mode'=>'markdown',
+    		'reply_markup'=>json_encode(['inline_keyboard'=>[
+    				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
+    			]])
     	]);
 		}
 		if($res->next_max_id != null){
@@ -628,20 +640,22 @@ class ig {
 			bot('editmessageText',[
     		'chat_id'=>$config['id'],
     		'message_id'=>$mid,
-    		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
-		]])
+    		'text'=>"Grab From Following Running\nUsere - ".count(explode("\n", file_get_contents($file)))."_",
+    		'parse_mode'=>'markdown',
+    		'reply_markup'=>json_encode(['inline_keyboard'=>[
+    				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
+    			]])
     	]);
     	bot('sendMessage',[
     		'chat_id'=>$config['id'],
     		'reply_to_message_id'=>$mid,
-    		'text'=>"*Done Collection . * \n All : ".count(explode("\n", file_get_contents($file))),
+    		'text'=>"Done Grab All Users\nUsers Count ¦ ".count(explode("\n", file_get_contents($file))),
     		'parse_mode'=>'markdown',
         ]);
 		}
 	}
+	
+	
 	public function getFollowers($id,$mid,$uuu,$maxId = null){
 	    $config = json_decode(file_get_contents('config.json'),1);
 	    $from = 'Followers';
@@ -660,15 +674,15 @@ class ig {
 					file_put_contents($file, $user->username."\n",FILE_APPEND);
 				}
 				}
-    	
+    	$from = file_exists('from') ? file_get_contents('from') : 'From Followers';
     	bot('editmessageText',[
     		'chat_id'=>$config['id'],
     		'message_id'=>$mid,
-    		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
-		]])
+    		'text'=>"Grab From Followers Running\nUsers - ".count(explode("\n", file_get_contents($file)))."_",
+    		'parse_mode'=>'markdown',
+    		'reply_markup'=>json_encode(['inline_keyboard'=>[
+    				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
+    			]])
     	]);
 		}
 		if($res->next_max_id != null){
@@ -676,16 +690,17 @@ class ig {
 		} else {
 			bot('editmessageText',[
     		'chat_id'=>$config['id'],
-    		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
-		]])
+    		'message_id'=>$mid,
+    		'text'=>"Grab From Followers Running\nUsere - ".count(explode("\n", file_get_contents($file)))."_",
+    		'parse_mode'=>'markdown',
+    		'reply_markup'=>json_encode(['inline_keyboard'=>[
+    				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
+    			]])
     	]);
     	bot('sendMessage',[
     		'chat_id'=>$config['id'],
     		'reply_to_message_id'=>$mid,
-    		'text'=>"*Done Collection . * \n All : ".count(explode("\n", file_get_contents($file))),
+    		'text'=>"Done Grab All Users\nUsers Count ¦ ".count(explode("\n", file_get_contents($file))),
     		'parse_mode'=>'markdown',
         ]);
 		}
@@ -700,11 +715,9 @@ class ig {
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
 		$res = curl_exec($ch);
-		
 		if(curl_error($ch)){
 			return curl_error($ch);
 		}else{
-		    
 			return json_decode($res);
 		}
 	}

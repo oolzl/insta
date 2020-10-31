@@ -14,10 +14,10 @@ $from = 'Followers';
 $mid = bot('sendMessage',[
 	'chat_id'=>$config['id'],
 	'message_id'=>$mid,
-	'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
+	'text'=>"Grab From $from - Running\nUsers - ".count(explode("\n", file_get_contents($file)))."",
 	'parse_mode'=>'markdown',
 	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
+			[['text'=>'Stop Grab','callback_data'=>'stopgr']]
 		]])
 ])->result->message_id;
 $ids = explode(' ', $config['words']);

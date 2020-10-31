@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 date_default_timezone_set('Asia/Baghdad');
 if(!file_exists('config.json')){
 	$token = readline('Enter Token: ');
@@ -30,17 +30,20 @@ try {
 					if($text == '/start'){
               $bot->sendMessage([
                   'chat_id'=>$chatId,
-                  'text'=>"اهلاً بك . \n - اداة فحص حسابات الانستاقرام. \n\n  النسخة العربية",
+                  'text'=>"Hi BROK in Your Tool\nThis Tool To Check Available Accounts in INSTAGRAM \n \n BY @x_BRK",
                   'reply_markup'=>json_encode([
                       'inline_keyboard'=>[
-                          [['text'=>'اضافة حساب 🛃','callback_data'=>'login']],
-                          [['text'=>'اعدادات الفحص 🔎','callback_data'=>'grabber']],
-                          [['text'=>'تشغيل الفحص ✅','callback_data'=>'run'],['text'=>'ايقاف الفحص ❌','callback_data'=>'stop']],
-                          [['text'=>'حالة الفحص ⚠️','callback_data'=>'status']],
+                          [['text'=>'Add Accounts','callback_data'=>'login']],
+                          [['text'=>'Grab List','callback_data'=>'grabber']],
+                          [['text'=>'Start Check','callback_data'=>'run'],['text'=>'Stop Check','callback_data'=>'stop']],
+                          
+                          [['text'=>'Status Tool','callback_data'=>'status']],
+                          [['text'=>'BRoK','url'=>'T.me/x_BRK']],
                       ]
                   ])
               ]);   
-          } elseif($text != null){
+          }
+elseif($text != null){
           	if($config['mode'] != null){
           		$mode = $config['mode'];
           		if($mode == 'addL'){
@@ -53,14 +56,12 @@ try {
           				if($body->message == 'challenge_required'){
           					$bot->sendMessage([
           							'chat_id'=>$chatId,
-          							'parse_mode'=>'markdown',
-          							'text'=>"*Error*. \n - Challenge Required"
+          							'text'=>"This Account Closed BY instagram."
           					]);
           				} else {
           					$bot->sendMessage([
           							'chat_id'=>$chatId,
-          							'parse_mode'=>'markdown',
-          							'text'=>"*Error*.\n - Incorrect Username Or Password"
+          							'text'=>"Username or Pass is Error"
           					]);
           				}
           			} elseif(isset($body->logged_in_user)) {
@@ -71,27 +72,27 @@ try {
 								      $CookieStr .= $item."; ";
 								  }
           				$account = ['cookies'=>$CookieStr,'useragent'=>'Instagram 27.0.0.7.97 Android (23/6.0.1; 640dpi; 1440x2392; LGE/lge; RS988; h1; h1; en_US)'];
-          				
+    
           				$accounts[$text] = $account;
           				file_put_contents('accounts.json', json_encode($accounts));
           				$mid = $config['mid'];
           				$bot->sendMessage([
-          				      'parse_mode'=>'markdown',
           							'chat_id'=>$chatId,
-          							'text'=>"*تم اضافة حسابك بنجاح ✅.*\n _Username_ : [$user])(instagram.com/$user)\n_ /start 👈  اضغط هنا _ : _{$body->full_name}_",
+          							'text'=>"Login Done BY This Account
+User - {$user} ",
 												'reply_to_message_id'=>$mid		
           					]);
           				$keyboard = ['inline_keyboard'=>[
-										[['text'=>"اضافة حساب جديد 🛂",'callback_data'=>'addL']]
+										[['text'=>"Add New Account",'callback_data'=>'addL']]
 									]];
 		              foreach ($accounts as $account => $v) {
-		                  $keyboard['inline_keyboard'][] = [['text'=>$account,'callback_data'=>'ddd'],['text'=>"تسجيل الخروج 🛄",'callback_data'=>'del&'.$account]];
+		                  $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'ddd'],['text'=>"Log Out",'callback_data'=>'del&'.$account]];
 		              }
-		              $keyboard['inline_keyboard'][] = [['text'=>'الرجوع الى القائمة الرئيسية ♻️','callback_data'=>'back']];
+		              $keyboard['inline_keyboard'][] = [['text'=>'Back','callback_data'=>'back']];
 		              $bot->editMessageText([
 		                  'chat_id'=>$chatId,
 		                  'message_id'=>$mid,
-		                  'text'=>"لوحة التحكم بالحسابات 🛅.",
+		                  'text'=>"Mange The Accounts.",
 		                  'reply_markup'=>json_encode($keyboard)
 		              ]);
 		              $config['mode'] = null;
@@ -102,22 +103,23 @@ try {
           		  if(is_numeric($text)){
           		    bot('sendMessage',[
           		        'chat_id'=>$chatId,
-          		        'text'=>"تم التعديل.",
+          		        'text'=>"Done",
           		        'reply_to_message_id'=>$config['mid']
           		    ]);
           		    $config['filter'] = $text;
           		    $bot->editMessageText([
                       'chat_id'=>$chatId,
                       'message_id'=>$mid,
-                      'text'=>"اهلاً بك . \n - اداة فحص حسابات الانستاقرام. \n\n النسخة العربية⚠️ ",
+                      'text'=>"Hi BROK in Your Tool\n This Tool To Grab & Check Availble accounts in insta \n it Check All Domains \n BY @x_BRK",
                   'reply_markup'=>json_encode([
                       'inline_keyboard'=>[
-                          [['text'=>'اضافة حساب 🛃','callback_data'=>'login']],
-                          [['text'=>'اعدادات الفحص 🔎','callback_data'=>'grabber']],
-                          [['text'=>'تشغيل الفحص ✅','callback_data'=>'run'],['text'=>'ايقاف الفحص ❌','callback_data'=>'stop']],
-                          [['text'=>'حالة الفحص ⚠️','callback_data'=>'status']],
+                          [['text'=>'Add Accounts','callback_data'=>'login']],
+                          [['text'=>'Grab List','callback_data'=>'grabber']],
+                          [['text'=>'Start Check','callback_data'=>'run'],['text'=>'Stop Check','callback_data'=>'stop']],
+                          
+                          [['text'=>'Status Tool','callback_data'=>'status']],
                       ]
-                  ])
+                      ])
                   ]);
           		    $config['mode'] = null;
 		              $config['mid'] = null;
@@ -125,7 +127,7 @@ try {
           		  } else {
           		    bot('sendMessage',[
           		        'chat_id'=>$chatId,
-          		        'text'=>'- يرجى ارسال رقم فقط .'
+          		        'text'=>'Please Send Me only Number'
           		    ]);
           		  }
           		} else {
@@ -161,10 +163,10 @@ try {
 				} else {
 					$bot->sendMessage([
 							'chat_id'=>$chatId,
-							'text'=>"Instagram Bussines Email Checker. ",
+							'text'=>"Hi in BROK Tool To Grab Available Accounts instagram",
 							'reply_markup'=>json_encode([
                   'inline_keyboard'=>[
-                      [['text'=>'By ; @Corup','url'=>'t.me/Corup']]
+                      [['text'=>'To BuY The Tool','url'=>'t.me/x_BRK']]
                   ]
 							])
 					]);
@@ -176,19 +178,19 @@ try {
           echo $data;
           if($data == 'login'){
               
-        		$keyboard = ['inline_keyboard'=>[
-										[['text'=>"اضافة حساب جديد 🛂",'callback_data'=>'addL']]
-									]];
-		              foreach ($accounts as $account => $v) {
-		                  $keyboard['inline_keyboard'][] = [['text'=>$account,'callback_data'=>'ddd'],['text'=>"تسجيل الخروج 🛄",'callback_data'=>'del&'.$account]];
-		              }
-		              $keyboard['inline_keyboard'][] = [['text'=>'الرجوع الى القائمة الرئيسية ♻️','callback_data'=>'back']];
-		              $bot->editMessageText([
-		                  'chat_id'=>$chatId,
-		                  'message_id'=>$mid,
-		                  'text'=>"لوحة التحكم بالحسابات 🛅.",
-		                  'reply_markup'=>json_encode($keyboard)
-		              ]);
+        	$keyboard = ['inline_keyboard'=>[
+							[['text'=>"Add New Account",'callback_data'=>'addL']]
+						]];
+            foreach ($accounts as $account => $v) {
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'ddd'],['text'=>"Log Out",'callback_data'=>'del&'.$account]];
+            }
+            $keyboard['inline_keyboard'][] = [['text'=>'Back','callback_data'=>'back']];
+            $bot->editMessageText([
+                'chat_id'=>$chatId,
+                'message_id'=>$mid,
+                'text'=>"Mange The Accounts",
+                'reply_markup'=>json_encode($keyboard)
+            ]);
           } elseif($data == 'addL'){
           	
           	$config['mode'] = 'addL';
@@ -196,53 +198,60 @@ try {
           	file_put_contents('config.json', json_encode($config));
           	$bot->sendMessage([
           			'chat_id'=>$chatId,
-          			'text'=>"قم بأرسال معلومات الحساب على الشكل التالي : \n `user:pass`",
+          			'text'=>"Send Me The Accoutn Like This \n User:Pass",
           			'parse_mode'=>'markdown'
           	]);
           } elseif($data == 'grabber'){
             
-            $for = $config['for'] != null ? $config['for'] : ' لايوجد حساب ☑️';
+            $for = $config['for'] != null ? $config['for'] : 'Select Account';
             $count = count(explode("\n", file_get_contents($for)));
+            foreach ($accounts as $account => $v) {
+            $brok = explode(':',$account)[0];
+           } 
             $bot->editMessageText([
                 'chat_id'=>$chatId,
                 'message_id'=>$mid,
-                'text'=>"قائمة اليوزرات  \n -  عدد اليوزرات ♻️ : $count \n -الحساب المستخدم ✅ : $for",
+                'text'=>"Grab List \n Users Count - $count \n Grab - $for",
                 'reply_markup'=>json_encode([
                     'inline_keyboard'=>[
-                        [['text'=>'عن طريق البحث 🔦','callback_data'=>'search']],
-                        [['text'=>' عن طريق الهاشتاك 📉 #','callback_data'=>'hashtag'],['text'=>' عن طريق اكسبلور 🌐','callback_data'=>'explore']],
-                        [['text'=>'Followers','callback_data'=>'followers'],['text'=>"Following",'callback_data'=>'following']],
-                        [['text'=>"الحساب المستخدم ✅ : $for",'callback_data'=>'for']],
-                        [['text'=>'تصفير اليوزرات 📂','callback_data'=>'newList'],['text'=>'التأكيد على الستة 📂','callback_data'=>'append']],
-                        [['text'=>'الرجوع الى القائمة الرئيسية ♻️','callback_data'=>'back']],
+                        [['text'=>'Grab From Search','callback_data'=>'search']],
+                        [['text'=>'Grab From Hashtag (#) ','callback_data'=>'hashtag']],
+                        [['text'=>'Account Followers','callback_data'=>'followers'],['text'=>"Account Following",'callback_data'=>'following']],
+                        
+                        [['text'=>"Select Account - $brok" ,'callback_data'=>'for']],
+                        [['text'=>'New Grab','callback_data'=>'newList'],['text'=>'On Old Grab','callback_data'=>'append']],
+                        [['text'=>'Back','callback_data'=>'back']],
                     ]
                 ])
             ]);
           } elseif($data == 'search'){
             $bot->sendMessage([
                 'chat_id'=>$chatId,
-                'text'=>"الان قم بأرسال كلمات للبحث عنها  \n - تستطيع ارسال اكثر من كلمة للبحث عنها عن طرق وضع فراغ بين الكلمات "
+                'text'=>"Send Me one Word or Many Words"
             ]);
             $config['mode'] = 'search';
             file_put_contents('config.json', json_encode($config));
-          } elseif($data == 'followers'){
+          } 
+elseif($data == 'followers'){
             $bot->sendMessage([
                 'chat_id'=>$chatId,
-                'text'=>"Now Send Users to check out followers \n - You can send more than one user by putting a space between them"
+                'text'=>"Send Me one User on Many Users"
             ]);
             $config['mode'] = 'followers';
             file_put_contents('config.json', json_encode($config));
+          } elseif($data == 'explore'){
+            exec('screen -dmS gr php explore.php');
           } elseif($data == 'following'){
             $bot->sendMessage([
                 'chat_id'=>$chatId,
-                'text'=>"Now Send Users to check out following \n - You can send more than one user by putting a space between them"
+                'text'=>"Send Me one User or Many Users"
             ]);
             $config['mode'] = 'following';
             file_put_contents('config.json', json_encode($config));
           } elseif($data == 'hashtag'){
             $bot->sendMessage([
                 'chat_id'=>$chatId,
-                'text'=>"الان قم بأرسال الهاشتاك بدون # \n تستطيع ارسال هاشتاك واحد فقط 🚧"
+                'text'=>"Send Me one Hashtag only"
             ]);
             $config['mode'] = 'hashtag';
             file_put_contents('config.json', json_encode($config));
@@ -250,14 +259,14 @@ try {
             file_put_contents('a','new');
             $bot->answerCallbackQuery([
 							'callback_query_id'=>$update->callback_query->id,
-							'text'=>"Done Select New List.",
+							'text'=>"Selected Grab To New List",
 							'show_alert'=>1
 						]);
           } elseif($data == 'append'){ 
             file_put_contents('a', 'ap');
             $bot->answerCallbackQuery([
 							'callback_query_id'=>$update->callback_query->id,
-							'text'=>"Done Select Append to list.",
+							'text'=>"Selected Grab on old List",
 							'show_alert'=>1
 						]);
 						
@@ -265,25 +274,25 @@ try {
             if(!empty($accounts)){
             $keyboard = [];
              foreach ($accounts as $account => $v) {
-                $keyboard['inline_keyboard'][] = [['text'=>$account,'callback_data'=>'forg&'.$account]];
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'forg&'.$account]];
               }
               $bot->editMessageText([
                   'chat_id'=>$chatId,
                   'message_id'=>$mid,
-                  'text'=>"Select Account.",
+                  'text'=>"Select Account",
                   'reply_markup'=>json_encode($keyboard)
               ]);
             } else {
               $bot->answerCallbackQuery([
 							'callback_query_id'=>$update->callback_query->id,
-							'text'=>"Add Account First.",
+							'text'=>"You Do Not Add Any Account",
 							'show_alert'=>1
 						]);
             }
-          } elseif($data == 'selectFollowers'){
+          }  elseif($data == 'selectFollowers'){
             bot('sendMessage',[
                 'chat_id'=>$chatId,
-                'text'=>'قم بأرسال عدد متابعين .'  
+                'text'=>'Send Me Following Count'  
             ]);
             $config['mode'] = 'selectFollowers';
           	$config['mid'] = $mid;
@@ -292,18 +301,18 @@ try {
             if(!empty($accounts)){
             $keyboard = [];
              foreach ($accounts as $account => $v) {
-                $keyboard['inline_keyboard'][] = [['text'=>$account,'callback_data'=>'start&'.$account]];
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'start&'.$account]];
               }
               $bot->editMessageText([
                   'chat_id'=>$chatId,
                   'message_id'=>$mid,
-                  'text'=>"Select Account.",
+                  'text'=>"Select Account",
                   'reply_markup'=>json_encode($keyboard)
               ]);
             } else {
               $bot->answerCallbackQuery([
 							'callback_query_id'=>$update->callback_query->id,
-							'text'=>"Add Account First.",
+							'text'=>"You Do Not Add Any Account",
 							'show_alert'=>1
 						]);
             }
@@ -311,18 +320,48 @@ try {
             if(!empty($accounts)){
             $keyboard = [];
              foreach ($accounts as $account => $v) {
-                $keyboard['inline_keyboard'][] = [['text'=>$account,'callback_data'=>'stop&'.$account]];
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'stop&'.$account]];
               }
               $bot->editMessageText([
                   'chat_id'=>$chatId,
                   'message_id'=>$mid,
-                  'text'=>"Select Account.",
+                  'text'=>"Select Account",
                   'reply_markup'=>json_encode($keyboard)
               ]);
             } else {
               $bot->answerCallbackQuery([
 							'callback_query_id'=>$update->callback_query->id,
-							'text'=>"Add Account First.",
+							'text'=>"You Do Not Add Any Account",
+							'show_alert'=>1
+						]);
+            }
+          } elseif($data == 'runall'){
+            foreach ($accounts as $account => $v) {
+            file_put_contents('screen', $account);
+              exec('screen -dmS '.explode(':',$account)[0].' php start.php');
+              $bot->sendMessage([
+                'chat_id'=>$chatId,
+                'text'=>"Checking Started - ".explode(':',$account)[0].'`',
+                'parse_mode'=>'markdown'
+              ]);
+              sleep(2);
+            }
+          } elseif($data == 'tran'){
+            if(!empty($accounts)){
+            $keyboard = [];
+             foreach ($accounts as $account => $v) {
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'tranfrom&'.$account]];
+              }
+              $bot->editMessageText([
+                  'chat_id'=>$chatId,
+                  'message_id'=>$mid,
+                  'text'=>"Form Account - ",
+                  'reply_markup'=>json_encode($keyboard)
+              ]);
+            } else {
+              $bot->answerCallbackQuery([
+							'callback_query_id'=>$update->callback_query->id,
+							'text'=>"You Do Not Add Any Account",
 							'show_alert'=>1
 						]);
             }
@@ -330,57 +369,60 @@ try {
             shell_exec('screen -S gr -X quit');
             $bot->answerCallbackQuery([
 							'callback_query_id'=>$update->callback_query->id,
-							'text'=>"Done Stop Collecting.",
-						// 	'show_alert'=>1
+							'text'=>"Grab Stoped",
+							'show_alert'=>1
 						]);
 						$for = $config['for'] != null ? $config['for'] : 'Select Account';
             $count = count(explode("\n", file_get_contents($for)));
-						$bot->editMessageText([
+						foreach ($accounts as $account => $v) {
+            $brok = explode(':',$account)[0];
+           } 
+$bot->editMessageText([
                 'chat_id'=>$chatId,
                 'message_id'=>$mid,
-                'text'=>" عدد اليوزرات ♻️ collection page. \n -  عدد اليوزرات ♻️ : $count \n - الحساب المستخدم ☑️ : $for",
+                 'text'=>"Grab List \n Users Count - $count \n Grab - $for",
                 'reply_markup'=>json_encode([
                     'inline_keyboard'=>[
-                        [['text'=>'عن طريق البحث 🔦','callback_data'=>'search']],
-                        [['text'=>'اعن طريق الهاشتاك 📉 #','callback_data'=>'hashtag'],['text'=>'عن طريق اكسبلور 🌐','callback_data'=>'explore']],
-                        [['text'=>'Followers','callback_data'=>'followers'],['text'=>"Following",'callback_data'=>'following']],
-                        [['text'=>"الحساب المستخدم ✅ : $for",'callback_data'=>'for']],
-                        [['text'=>'تصفير اليوزرات 📂','callback_data'=>'newList'],['text'=>'التأكيد على الستة 📂','callback_data'=>'append']],
-                        [['text'=>'الرجوع الى القائمة الرئيسية ♻️','callback_data'=>'back']],
+                        [['text'=>'Grab From Search','callback_data'=>'search']],
+                        [['text'=>'Grab From Hashtag (#) ','callback_data'=>'hashtag']],
+                        [['text'=>'Account Followers','callback_data'=>'followers'],['text'=>"Account Following",'callback_data'=>'following']],
+                        
+                        [['text'=>"Select Account - $brok",'callback_data'=>'for']],
+                        [['text'=>'New Grab','callback_data'=>'newList'],['text'=>'On Old Grab','callback_data'=>'append']],
+                        [['text'=>'Back','callback_data'=>'back']],
                     ]
                 ])
             ]);
-          } elseif($data == 'explore'){
-            exec('screen -dmS gr php explore.php');
           } elseif($data == 'status'){
 					$status = '';
 					foreach($accounts as $account => $ac){
 						$c = explode(':', $account)[0];
 						$x = exec('screen -S '.$c.' -Q select . ; echo $?');
 						if($x == '0'){
-				        $status .= "*$account* ~> _Working_\n";
+				        $status .= "User - ".explode(':',$account)[0]." - Running\n" ;
 				    } else {
-				        $status .= "*$account* ~> _متوقف 📛_\n";
+				        $status .= "User -" .explode(':',$account)[0]." - Stoped\n" ;
 				    }
 					}
 					$bot->sendMessage([
 							'chat_id'=>$chatId,
-							'text'=>"حالة الفحص ⚠️: \n\n $status",
+							'text'=>"Status All Accounts \n $status",
 							'parse_mode'=>'markdown'
 						]);
 				} elseif($data == 'back'){
           	$bot->editMessageText([
                       'chat_id'=>$chatId,
                       'message_id'=>$mid,
-                      'text'=>"اهلاً بك . \n - اداة فحص حسابات الانستاقرام. \n\n ⚠️ النسخة العربية",
+                      'text'=>"Hi BROK in Your Tool\n This Tool To Grab & Check Availble accounts in insta \n it Check All Domains \n BY @x_BRK",
                   'reply_markup'=>json_encode([
                       'inline_keyboard'=>[
-                          [['text'=>'اضافة حساب 🛃','callback_data'=>'login']],
-                          [['text'=>'اعدادات الفحص 🔎','callback_data'=>'grabber']],
-                          [['text'=>'تشغيل الفحص ✅','callback_data'=>'run'],['text'=>'ايقاف الفحص ❌','callback_data'=>'stop']],
-                          [['text'=>'حالة الفحص ⚠️','callback_data'=>'status']],
+                          [['text'=>'Add Accounts','callback_data'=>'login']],
+                          [['text'=>'Grab List','callback_data'=>'grabber']],
+                          [['text'=>'Start Check','callback_data'=>'run'],['text'=>'Stop Check','callback_data'=>'stop']],
+                          
+                          [['text'=>'Status Tool','callback_data'=>'status']],
                       ]
-                  ])
+                      ])
                   ]);
           } else {
           	$data = explode('&',$data);
@@ -389,72 +431,128 @@ try {
           		unset($accounts[$data[1]]);
           		file_put_contents('accounts.json', json_encode($accounts));
               $keyboard = ['inline_keyboard'=>[
-							[['text'=>"اضافة حساب جديد 🛂",'callback_data'=>'addL']]
-									]];
-		              foreach ($accounts as $account => $v) {
-		                  $keyboard['inline_keyboard'][] = [['text'=>$account,'callback_data'=>'ddd'],['text'=>"تسجيل الخروج 🛄",'callback_data'=>'del&'.$account]];
-		              }
-		              $keyboard['inline_keyboard'][] = [['text'=>'الرجوع الى القائمة الرئيسية ♻️','callback_data'=>'back']];
-		              $bot->editMessageText([
-		                  'chat_id'=>$chatId,
-		                  'message_id'=>$mid,
-		                  'text'=>"لوحة التحكم بالحسابات 🛅.",
-		                  'reply_markup'=>json_encode($keyboard)
-		              ]);
+							[['text'=>"Add New Account",'callback_data'=>'addL']]
+						]];
+            foreach ($accounts as $account => $v) {
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'ddd'],['text'=>"Log Out",'callback_data'=>'del&'.$account]];
+            }
+            $keyboard['inline_keyboard'][] = [['text'=>'Back','callback_data'=>'back']];
+            $bot->editMessageText([
+                'chat_id'=>$chatId,
+                'message_id'=>$mid,
+                'text'=>"Mange The Accounts.",
+                'reply_markup'=>json_encode($keyboard)
+            ]);
           	} elseif($data[0] == 'forg'){
           	  $config['for'] = $data[1];
           	  file_put_contents('config.json',json_encode($config));
-              $for = $config['for'] != null ? $config['for'] : 'Select';
-              $count = count(file_get_contents($for));
+              $for = $config['for'] != null ? $config['for'] : 'Select Account';
+             foreach ($accounts as $account => $v) {
+            $brok = explode(':',$account)[0];
+           } 
+ $count = count(file_get_contents($for));
               $bot->editMessageText([
                 'chat_id'=>$chatId,
                 'message_id'=>$mid,
-                'text'=>" عدد اليوزرات ♻️ collection page. \n -  عدد اليوزرات ♻️ : $count \n - الحساب المستخدم ☑️  : $for",
+               'text'=>"Grab List \n Users Count - $count \n Grab - $for",
                 'reply_markup'=>json_encode([
                     'inline_keyboard'=>[
-                        [['text'=>'عن طريق البحث 🔦','callback_data'=>'search']],
-                        [['text'=>' عن طريق الهاشتاك 📉 #','callback_data'=>'hashtag'],['text'=>' عن طريق اكسبلور 🌐','callback_data'=>'explore']],
-                        [['text'=>'Followers','callback_data'=>'followers'],['text'=>"Following",'callback_data'=>'following']],
-                        [['text'=>"الحساب المستخدم ✅ : $for",'callback_data'=>'for']],
-                        [['text'=>'تصفير اليوزرات 📂','callback_data'=>'newList'],['text'=>'التأكيد على الستة 📂','callback_data'=>'append']],
-                        [['text'=>'الرجوع الى القائمة الرئيسية ♻️','callback_data'=>'back']],
+                        [['text'=>'Grab From Search','callback_data'=>'search']],
+                        [['text'=>'Grab From Hashtag (#) ','callback_data'=>'hashtag']],
+                        [['text'=>'Account Followers','callback_data'=>'followers'],['text'=>"Account Following",'callback_data'=>'following']],
+                        
+                        [['text'=>"Select Account - $brok",'callback_data'=>'for']],
+                        [['text'=>'New Grab','callback_data'=>'newList'],['text'=>'On Old Grab','callback_data'=>'append']],
+                        [['text'=>'Back','callback_data'=>'back']],
                     ]
                 ])
             ]);
-          	} elseif($data[0] == 'start'){
+          	}  elseif($data[0] == 'tranfrom'){
+          	  $keyboard = [];
+             foreach ($accounts as $account => $v) {
+                $keyboard['inline_keyboard'][] = [['text'=>'User - '.explode(':',$account)[0].' ','callback_data'=>'tranto&'.$account]];
+              }
+              file_put_contents('tranfrom', $data[1]);
+              $bot->editMessageText([
+                  'chat_id'=>$chatId,
+                  'message_id'=>$mid,
+                  'text'=>"To Account - ",
+                  'reply_markup'=>json_encode($keyboard)
+              ]);
+          	} elseif($data[0] == 'tranto'){
+          	  $from = file_get_contents('tranfrom');
+          	  if(file_exists($from)){
+          	    $list = file_get_contents($from);
+          	    if(!empty($list)){
+          	      file_put_contents($data[1],$list);
+          	      bot('sendMessage',[
+          	       'chat_id'=>$chatId,
+          	       'text'=>"Done Move List $from To - ".$data[1]."*",
+          	       'parse_mode'=>'markdown'
+          	     ]);
+          	     $bot->editMessageText([
+                      'chat_id'=>$chatId,
+                      'message_id'=>$mid,
+                     'text'=>"Hi BROK in Your Tool\n This Tool To Grab & Check Availble accounts in insta \n it Check All Domains \n BY @x_BRK",
+                  'reply_markup'=>json_encode([
+                      'inline_keyboard'=>[
+                          [['text'=>'Add Accounts','callback_data'=>'login']],
+                          [['text'=>'Grab List','callback_data'=>'grabber']],
+                          [['text'=>'Start Check','callback_data'=>'run'],['text'=>'Stop Check','callback_data'=>'stop']],
+                          
+                          [['text'=>'Status Tool','callback_data'=>'status']],
+                      ]
+                      ])
+                  ]);
+          	    } else {
+          	      bot('sendMessage',[
+          	       'chat_id'=>$chatId,
+          	       'text'=>"This Account $from Does Not has List To Move it",
+          	       'parse_mode'=>'markdown'
+          	     ]);
+          	    }
+           	  } else { 
+          	    bot('sendMessage',[
+          	       'chat_id'=>$chatId,
+          	       'text'=>"This Account $from Does Not has List To Move it",
+          	       'parse_mode'=>'markdown'
+          	     ]);
+          	  }
+        	  }elseif($data[0] == 'start'){
           	  file_put_contents('screen', $data[1]);
           	  $bot->editMessageText([
                       'chat_id'=>$chatId,
                       'message_id'=>$mid,
-                      'text'=>"اهلاً بكً  . \n - To Your اداة فحص حسابات الانستاقرام. \n\n ⚠️ النسخة العربية",
+                     'text'=>"Hi BROK in Your Tool\n This Tool To Grab & Check Availble accounts in insta \n it Check All Domains \n BY @x_BRK",
                   'reply_markup'=>json_encode([
                       'inline_keyboard'=>[
-                          [['text'=>'اضافة حساب 🛃','callback_data'=>'login']],
-                          [['text'=>'اعدادات الفحص 🔎','callback_data'=>'grabber']],
-                          [['text'=>'تشغيل الفحص ✅','callback_data'=>'run'],['text'=>'ايقاف الفحص ❌','callback_data'=>'stop']],
-                          [['text'=>'حالة الفحص ⚠️','callback_data'=>'status']],
+                          [['text'=>'Add Accounts','callback_data'=>'login']],
+                          [['text'=>'Grab List','callback_data'=>'grabber']],
+                          [['text'=>'Start Check','callback_data'=>'run'],['text'=>'Stop Check','callback_data'=>'stop']],
+                          
+                          [['text'=>'Status Tool','callback_data'=>'status']],
                       ]
-                  ])
+                      ])
                   ]);
               exec('screen -dmS '.explode(':',$data[1])[0].' php start.php');
               $bot->sendMessage([
                 'chat_id'=>$chatId,
-                'text'=>"*تشغيل الفحص ✅.*\n Account: `".explode(':',$data[1])[0].'`',
-                'parse_mode'=>'markdown'
+                'text'=>"Cheking Started - ".explode(':',$data[1])[0].'`'
               ]);
           	} elseif($data[0] == 'stop'){
           	  $bot->editMessageText([
                       'chat_id'=>$chatId,
                       'message_id'=>$mid,
-                      'text'=>"اهلاً بك . \n - اداة فحص حسابات الانستاقرام . \n\n  ⚠️ النسخة العربية ",
-                      'reply_markup'=>json_encode([
+                     'text'=>"Hi BROK in Your Tool\n This Tool To Grab & Check Availble accounts in insta \n it Check All Domains \n BY @x_BRK",
+                  'reply_markup'=>json_encode([
                       'inline_keyboard'=>[
-                          [['text'=>'اضافة حساب 🛃','callback_data'=>'login']],
-                          [['text'=>'اعدادات الفحص 🔎','callback_data'=>'grabber']],
-                          [['text'=>'تشغيل الفحص ✅','callback_data'=>'run'],['text'=>'ايقاف الفحص ❌','callback_data'=>'متوقف 📛']],
-                          [['text'=>'حالة الفحص ⚠️','callback_data'=>'status']],
+                          [['text'=>'Add Accounts','callback_data'=>'login']],
+                          [['text'=>'Grab List','callback_data'=>'grabber']],
+                          [['text'=>'Start Check','callback_data'=>'run'],['text'=>'Stop Check','callback_data'=>'stop']],
+                          
+                          [['text'=>'Status Tool','callback_data'=>'status']],
                       ]
-                    ])
+                      ])
                   ]);
               exec('screen -S '.explode(':',$data[1])[0].' -X quit');
           	}

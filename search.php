@@ -15,14 +15,13 @@ $a = file_exists('a') ? file_get_contents('a') : 'ap';
 if($a == 'new'){
 	file_put_contents($file, '');
 }
-$from = 'Search';
 $mid = bot('sendMessage',[
 		'chat_id'=>$id,
-		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
-		]])
+		'text'=>"Grab From Search - Running\nUsers - ".count(explode("\n", file_get_contents($file)))."",
+		'parse_mode'=>'markdown',
+		'reply_markup'=>json_encode(['inline_keyboard'=>[
+				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
+			]])
 	])->result->message_id;
 foreach($words as $word){
 foreach($chars as $char){
@@ -53,14 +52,14 @@ foreach($search->users as $user){
 	$i++;
 	if($i == $e){
 	echo 'edit..';
-	$from = 'البحث';
+	$from = 'Search';
 	bot('editmessageText',[
 		'chat_id'=>$id,
 		'message_id'=>$mid,
-		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
+		'text'=>"Grab From $from - Running\nUsers - ".count(explode("\n", file_get_contents($file)))."",
+		'parse_mode'=>'markdown',
+		'reply_markup'=>json_encode(['inline_keyboard'=>[
+				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
 			]])
 	]);
 	$e += 25;
@@ -95,15 +94,15 @@ foreach($search->users as $user){
 	$i++;
 	if($i == $e){
 	echo 'edit..';
-	$from = 'البحث';
+	$from = 'Search';
 	bot('editmessageText',[
 		'chat_id'=>$id,
 		'message_id'=>$mid,
-		'text'=>"*Collection From* ~ [ _ $from _ ]\n\n*Status* ~> _ Working _\n*Users* ~> _ ".count(explode("\n", file_get_contents($file)))."_",
-	'parse_mode'=>'markdown',
-	'reply_markup'=>json_encode(['inline_keyboard'=>[
-			[['text'=>'Stop.','callback_data'=>'stopgr']]
-		]])
+		'text'=>"Grab From $from - Running\nUsers - ".count(explode("\n", file_get_contents($file)))."",
+		'parse_mode'=>'markdown',
+		'reply_markup'=>json_encode(['inline_keyboard'=>[
+				[['text'=>'Stop Grab','callback_data'=>'stopgr']]
+			]])
 	]);
 	$e += 25;
 }
@@ -114,7 +113,7 @@ foreach($search->users as $user){
 bot('sendMessage',[
 		'chat_id'=>$id,
 		'reply_to_message_id'=>$mid,
-		'text'=>"*Done Collection . * \n All : ".count(explode("\n", file_get_contents($file))),
+		'text'=>"Done Grab All\nCount All Users - ".count(explode("\n", file_get_contents($file))),
 		'parse_mode'=>'markdown',
 ]);
 
